@@ -1,0 +1,276 @@
+accounts = {}
+
+jeeps = {
+    "01K": ["urgello", "Emall", "colon", "sm city", "parkmall"],
+    "01C": [" private", "fuente", "jones avenue", "colon", "carbon"],
+    "03C": ["mabolo", "m.j. cuenco", "sm city cebu", "colon", "carbon"],
+    "03Q": ["ayala center", "lahug", "mabolo", "sm city cebu", "north reclamation"],
+    "04B": ["lahug", "jy square", "gorordo avenue", "colon", "carbon"],
+    "04L": ["lahug", "jy square", "cebu it park", "gorordo avenue", "ayala center"],
+    "06B": ["guadalupe", "banawa", "fuente", "colon", "carbon"],
+    "06H": ["guadalupe", "banawa", "fuente", "mabolo", "sm city cebu"],
+    "09C": ["basak", "pardo", "bulacao", "colon", "carbon"],
+    "10H": ["bulacao", "pardo", "fuente", "mabolo", "sm city cebu"],
+    "11A": ["inayawan", "basak", "pardo", "colon", "carbon"],
+    "12L": ["labangon", "katipunan", "fuente", "capitol", "ayala center"],
+    "13B": ["talamban", "gaisano grand talamban", "banilad", "cebu it park", "carbon"],
+    "13C": ["talamban", "banilad", "gorordo avenue", "fuente", "colon"],
+    "14D": ["capitol", "fuente", "ayala center", "jones avenue", "colon"],
+    "17B": ["apas", "cebu it park", "lahug", "gorordo avenue", "carbon"],
+    "17D": ["apas", "cebu it park", "lahug", "jy square", "carbon"],
+    "20A": ["mandaue", "subangdaku", "north reclamation", "sm city cebu", "ayala center"],
+    "62B": ["pit-os", "talamban", "banilad", "cebu it park", "carbon"],
+}
+
+
+def create_account():
+    print("\n==========================================")
+    print("         CREATE YOUR CEBUNAV ACCOUNT ")
+    print("==========================================")
+
+    # Personal Information
+    name = input("Enter your full name: ").strip()
+    username = input("Create a username: ").strip()
+    
+    while True:
+        email_address = input("Email address: ").strip().lower()
+        if "@" in email_address and ".com" in email_address:
+            break
+        else:
+             print("Invalid Email Address (Must contain '@' and '.com')")
+
+    # Password
+    while True:
+        password = input("Create your password (8 characters): ")
+
+        if len(password) != 8:
+            print("Password must be exactly 8 characters.")
+            continue
+
+        confirm_password = input("Confirm your password: ")
+
+        if password == confirm_password:
+            print("Password created successfully!")
+            break
+        else:
+            print("Passwords do not match.")
+
+    accounts[username] = {
+        "name": name,
+        "email_address": email_address,
+        "password": password,
+    }
+
+    # Account Created
+    print("\n==========================================")
+    print("       CEBUNAV ACCOUNT CREATED!")
+    print("==========================================")
+    print("Welcome to CEBUNAV, " + name + "!")
+    print("Your account has been saved.")
+    print("You can now log in.")
+    print("==========================================")
+
+    input("\nPress Enter to return to the ACCOUNT CREATION...")
+
+def account_type():
+    print("\n1. Regular Passenger")
+    print("2. Student")
+    print("3. Senior Citizen")
+    print("4. PWD")
+
+    types = {
+        "1": "regular",
+        "2": "student",
+        "3": "senior",
+        "4": "pwd"
+    }
+
+    choice = input("Choose account type: ")
+    return types[choice] if choice in types else account_type()
+  
+def calculate_fare(fare, account):
+    discount = 0.20 if account.lower() in ["student", "senior", "pwd"] else 0
+    final_fare = fare * (1 - discount)
+
+    print(f"Original Fare: ₱{fare:.2f}")
+    print(f"Discount: {discount:.0%}")
+    print(f"Final Fare: ₱{final_fare:.2f}")
+
+    return final_fare
+  
+
+def route_finder(account):
+    print("\n========== FIND YOUR ROUTE ==========")
+    places = []
+    for stops in jeeps.values():
+        for stop in stops: 
+          if stop not in places: 
+             places.append(stop)
+            
+    print("Places Available: ")
+    for places in places: 
+       print(" -- " + places.title())
+       
+
+    start = input("Enter your location: ").lower().strip()
+    destination = input("Enter your destination: ").lower().strip()
+
+    found = False
+
+    print("\n========== AVAILABLE JEEPNEYS ==========")
+
+    for code, stops in jeeps.items():
+        if start in stops and destination in stops:
+            found = True
+
+            print(f"\nJeepney Code: {code}")
+            print("Route:", " --> ".join(stops))
+
+    if not found:
+        print("Sorry, no jeepney found for this route.")
+        return
+
+    # Calculate fare
+    fare = 0
+
+    if start == "urgello":
+        if destination == "emall":
+            fare = 15
+        elif destination == "colon":
+            fare = 13
+        elif destination == "sm city":
+            fare = 17
+        elif destination == "parkmall":
+            fare = 20
+
+    if fare > 0:
+        print("\n========== FARE DETAILS ==========")
+        calculate_fare(fare, account)
+    else:
+        print("\nFare for this route is not yet available.")
+
+    print("======================================")
+
+           
+# ---------- 4. HANDBOOK and SAVED ROUTES ----------
+def handbook():
+    print("\n==================== HANDBOOK =========================")
+    print("-------------------- Reminders/Tips----------------------\n")
+    print("1. Check the jeep code before you ride.")
+    print("2. If your Student/Senior/PWD,(20%)")
+    print("3. Prepare your fare.")
+    print("4. Keep your bag in front of you.")
+    print("5. Say 'para' to stop the jeep.")
+
+# ---------- 5. DASHBOARD ----------
+def dashboard(username=None, account="Regular Passenger"):
+    while True:
+        print("\n================= CEBUNAV DASHBOARD =====================")
+        print("1. Find Route")
+        print("2. Handbook")
+
+        if username is None:
+            print("3. Create Account\n")
+        else:
+            print("3. Log out\n")
+
+        choice = input("Choose 1, 2, or 3: ").strip()
+
+        if choice == "1":
+            route_finder(account)
+
+        elif choice == "2":
+            handbook()
+
+        elif choice == "3":
+            if username is None:
+                print("Create Account!")
+                create_account()
+            else:
+                print("Logged out. Amping!")
+            break
+
+        else:
+            print("Invalid choice.")
+
+
+
+def Guest():
+    print("\n========== CEBUNAV GUEST ACCESS ==========")
+    print("You can use CEBUNAV without an account.")
+
+    account = account_type()
+
+    print("\nWelcome, Guest!")
+    print(f"Passenger type: {account.title()}")
+
+    input("\nPress Enter to proceed to dashboard...")
+
+    dashboard(username=None, account=account)
+
+def login():
+    print("\n=============================================")
+    print("                   CEBUNAV")
+    print("=============================================")
+    print("--------------------LOG IN-------------------")
+
+    username = input("Enter your username: ").strip()
+    password = input("Enter your password: ")
+    if not accounts:
+        print("No account found. Please create an account first.")
+        return
+
+    if username in accounts and password == accounts[username]["password"]:
+        name = accounts[username]["name"]
+        print(f"\nWelcome back, {name}! Amping!")
+        
+
+        account = account_type()
+        dashboard(username, account)
+    else:
+        print("Incorrect username or password.")
+  
+
+
+while True:
+    print("\n==========================================")
+    print("               CEBUNAV")
+    print("      Go anywhere, basta naay CEBUNAV")
+    print("===========================================")
+    print("-------------ACCOUNT MENU-----------------\n")
+    print("1. Create an Account")
+    print("2. Log In")
+    print("3. Guest")
+    print("4. Exit")
+    print("------------------------------------------")
+
+    option = input(
+        "Enter the number of the selected option: "
+    ).strip()
+
+    if option == "1":
+        create_account()
+
+    elif option == "2":
+        login()
+
+    elif option == "3":
+        Guest()
+
+    elif option == "4":
+        print("\n==========================================")
+        print("     Thank you for choosing CEBUNAV!")
+        print("==========================================")
+        break
+
+    else:
+        print("\nInvalid choice.")
+        print("Please select 1, 2, 3, or 4.")
+     
+
+
+
+
+
+
+
